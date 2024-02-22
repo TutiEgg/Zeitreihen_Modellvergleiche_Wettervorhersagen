@@ -28,5 +28,8 @@ Folgende Einstellungen können vorgenommen werden:
 - dropout: dropout chance
 
 # Create_Data
-In dieser Datei findet die vorverarbeitung des Datensatzes statt
+In dieser Datei findet die vorverarbeitung des Datensatzes statt.
+
+# Environment
+Es wurde mit Python 3.10 gearbeitet.
                                                                                                                                                             
