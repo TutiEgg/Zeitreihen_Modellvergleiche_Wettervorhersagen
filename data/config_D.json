@@ -1,0 +1,39 @@
+{
+    "features": [
+        "p_(mbar)",
+        "T_(degC)",
+        "Tpot_(K)",
+        "Tdew_(degC)",
+        "rh_(%)",
+        "VPmax_(mbar)",
+        "VPact_(mbar)",
+        "VPdef_(mbar)",
+        "sh_(g/kg)",
+        "H2OC_(mmol/mol)",
+        "rho_(g/m**3)",
+        "Wx",
+        "Wy",
+        "max_Wx",
+        "max_Wy",
+        "day_of_month",
+        "day_of_year",
+        "month",
+        "week_of_year",
+        "year"
+    ],
+    "target": [
+        "T_(degC)"
+    ],
+    "group_by_key": 
+        "day_of_month",
+    "lag_features": [
+        "T_(degC)_lag_1"
+    ],
+    "epochs": 150,
+    "batch_size": 2,
+    "horizon_size": 30,
+    "history_size": 30,
+    "channels": 16,
+    "lr": 1e-4,
+    "dropout": 0.1
+}

@@ -1,0 +1,4 @@
+{
+    "val_loss": 1.9969221353530884,
+    "best_model_path": "models/ts_views_models\\ts-v3.ckpt"
+}

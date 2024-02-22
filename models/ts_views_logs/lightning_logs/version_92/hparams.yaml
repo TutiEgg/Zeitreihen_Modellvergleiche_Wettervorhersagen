@@ -1,0 +1,5 @@
+channels: 8
+dropout: 0.1
+lr: 0.001
+n_decoder_inputs: 7
+n_encoder_inputs: 7

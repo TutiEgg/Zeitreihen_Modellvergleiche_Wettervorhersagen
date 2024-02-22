@@ -1,0 +1,6 @@
+{
+    "val_loss": 0.11495520174503326,
+    "test_mae": 0.7891204357147217,
+    "test_mse": 1.3884782791137695,
+    "best_model_path": "models/ts_views_models\\ts-v53.ckpt"
+}
