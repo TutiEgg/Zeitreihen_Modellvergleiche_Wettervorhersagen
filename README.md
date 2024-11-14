@@ -13,7 +13,6 @@ Dieses Projekt vergleicht verschiedene Modelle zur Vorhersage von Wetterdaten-Ze
 
 ## Einleitung
 
-![Einführung in die Wettervorhersage-Methoden](path/to/image1.png)
 
 Wettervorhersagen basieren auf mathematischen Modellen der Atmosphäre und nutzen zunehmend Deep-Learning-Ansätze. Dieser Vergleich zielt darauf ab, verschiedene Modellarchitekturen wie LSTM und Transformer mit traditionellen Methoden wie SARIMA zu evaluieren.
 
@@ -27,32 +26,37 @@ Die betrachteten Modelle umfassen:
 
 ## Datensatz und Datenvorverarbeitung
 
-![Datensatz-Visualisierung](path/to/image2.png)
+![Datensatz-Visualisierung](img/Datensatz_plot.PNG)
 
 Der verwendete Datensatz, bereitgestellt vom Max-Planck-Institut, umfasst meteorologische Daten von 2009 bis 2016. Die Daten enthalten 14 Variablen, darunter Temperatur, Luftdruck und Windgeschwindigkeit, mit einer ursprünglichen Abtastrate von 10 Minuten. Der Datensatz wurde in stündliche Intervalle umgewandelt, und fehlerhafte Werte wurden bereinigt.
 
 ### Datenvorverarbeitungsschritte:
 1. **Korrektur fehlerhafter Werte**: Werte wie -9999 bei Windgeschwindigkeit wurden auf 0.0 gesetzt.
 2. **Umwandlung der Winddaten**: Windrichtung und -geschwindigkeit wurden in Vektoren umgewandelt, um Kontinuität zu gewährleisten.
+    <p float="left">
+    <img src="img/Wind_1.PNG" alt="Bild 1" width="200" />
+    <img src="img/Wind_2.PNG" alt="Bild 2" width="200" />
+    </p>
 3. **Normalisierung**: Die Daten wurden auf einen einheitlichen Wertebereich skaliert.
 
 ## Modelle und Methodik
 
 ### SARIMA-Modell
 
-![SARIMA Modell](path/to/image3.png)
 
 Das SARIMA-Modell nutzt saisonale und nicht-saisonale Parameter zur Modellierung der Zeitreihe. Der Augmented Dickey-Fuller-Test wurde zur Sicherstellung der Stationarität der Daten angewandt. Eine Vielzahl an Modellkonfigurationen wurde getestet, um die besten Parameter mittels Akaike-Informationskriterium (AIC) zu identifizieren.
+<p float="left">
+    <img src="img/PACF_6h.PNG" alt="Bild 1" width="200" />
+    <img src="img/PACF_month.PNG" alt="Bild 2" width="200" />
+    <img src="img/Frequenzen.PNG" alt="Bild 2" width="200" />
+    </p>
 
 ### LSTM-Modell
 
-![LSTM Modell](path/to/image4.png)
 
 Das LSTM-Modell besteht aus einer LSTM-Schicht und einer voll verbundenen Schicht für die Ausgabe. Die Eingabedaten wurden mit einem „WindowGenerator“ vorstrukturiert, der Eingabefenster für historische Daten und die Zielwerte für Vorhersagen erstellt.
 
 ### Transformer-Modell
-
-![Transformer Architektur](path/to/image5.png)
 
 Das Transformer-Modell nutzt eine Encoder-Decoder-Architektur mit einer Maskierungsfunktion, die sicherstellt, dass nur vergangene Daten zur Vorhersage herangezogen werden. Die Daten werden durch ein Sliding-Window-Verfahren strukturiert und in 16-dimensionale Embeddings überführt.
 
@@ -66,13 +70,29 @@ Die Ergebnisse zeigen deutliche Unterschiede in der Genauigkeit und der Effizien
 
 ## Diskussion
 
-- **Feature-Auswahl**: Zeitmerkmale wie "Tag des Monats" verbessern die Modellgenauigkeit.
-- **Overfitting**: Transformer neigen zu Overfitting bei kleineren Datensätzen.
-- **Frequenzabhängigkeit**: Unterschiedliche Datenfrequenzen beeinflussen die Vorhersagegenauigkeit.
+- **Frequenzabhängigkeit und Modellkomplexität**: Die Wahl der Datenfrequenz (z. B. 6-stündlich oder täglich) beeinflusst die Genauigkeit der Modelle. Insbesondere bei kürzeren Frequenzen zeigt SARIMA eine höhere Effizienz und erreicht gute Vorhersagegenauigkeiten mit stabilen saisonalen Mustern. Bei täglichen Daten sinkt jedoch die Genauigkeit, was auf die Schwierigkeiten hinweist, langzeitliche Abhängigkeiten zu modellieren. Transformer- und LSTM-Modelle erwiesen sich bei kurzen Frequenzen als besser geeignet.
+  
+- **Saisonalitätsparameter**: SARIMA-Modelle reagieren empfindlich auf die Wahl der Saisonalitätsparameter, die das Modell in einigen Fällen zu Overfitting neigen lässt, besonders wenn eine zu lange Periodizität angenommen wird. Bei der Verwendung saisonaler Komponenten mit Frequenzen von über zwölf Monaten liefern die Modelle keine zusätzlichen Erkenntnisse, da saisonale Muster jenseits eines Jahres nicht signifikant nachgewiesen wurden.
+
+- **Input-Dimension und Modellleistung**: Für die Deep-Learning-Modelle, insbesondere Transformer, konnte durch Reduzierung der Input-Dimension eine Leistungssteigerung erzielt werden. Eine geringere Anzahl von Features führte zu einer geringeren Modellkomplexität und gleichzeitig zu verbesserten Fehlermaßen (z. B. MAE, MSE, Smape), was die Bedeutung einer sorgfältigen Feature-Auswahl bei der Modellierung unterstreicht.
+
+- **Verlustfunktion und Modellleistung**: Bei LSTM-Modellen beeinflusst die Wahl der Verlustfunktion (MSE vs. Smape) die Modellleistung. Smape führte in den meisten Fällen zu besseren Ergebnissen, was darauf hinweist, dass die Verlustfunktion basierend auf den Vorhersagezielen und der Art der Daten sorgfältig gewählt werden sollte.
+
+- **Regularisierung und Konzeptdrift im Transformer-Modell**: Die Anwendung von Dropout führte zu Schwankungen in den Trainingsläufen, und das Sliding-Window-Verfahren zeigte, dass unterschiedliche Positionen des Fensters verschiedene Aspekte der zugrunde liegenden Muster betonen. Ein gezieltes Preprocessing und eine bessere Regularisierung könnten diese Abweichungen reduzieren.
+
+## Herausforderungen
+
+Während des Projekts traten folgende Herausforderungen auf:
+
+- **Fehlerhafte und fehlende Daten**: Daten mussten manuell korrigiert werden, um fehlerhafte Werte wie -9999 zu bereinigen. Dieser Prozess war notwendig, um die Integrität der Daten zu gewährleisten und deren Einfluss auf die Modellgenauigkeit zu minimieren.
+- **Überanpassung bei Deep-Learning-Modellen**: Besonders Transformer neigten dazu, die Trainingsdaten zu überanpassen. Techniken wie Dropout und Early Stopping wurden eingesetzt, um das Modell zu regulieren.
+- **Hyperparameteroptimierung**: Die Auswahl der besten Hyperparameter war zeitaufwendig und erforderte umfangreiche Tests. Insbesondere die Festlegung der Epochenzahl und die Batchgröße beeinflussten die Effizienz und Genauigkeit der Modelle.
+- **Komplexität der Transformermodelle**: Die Transformer-Modelle waren speicherintensiv und erforderten spezifische Konfigurationen der Eingabedimensionen und History Size, um präzise Vorhersagen zu erzielen.
+- **Berechnungskapazitäten**: Die benötigten Rechenressourcen für die Deep-Learning-Modelle waren hoch. Insbesondere Transformer und LSTM erforderten deutlich mehr Kapazität als SARIMA.
 
 ## Fazit
 
-Die Ergebnisse zeigen, dass die Wahl des Modells von der Art der Zeitreihe abhängt:
+Die Ergebnisse dieses Projekts zeigen, dass die Wahl des Modells stark von der Art der Zeitreihe abhängt:
 
 - **SARIMA**: Effizient für schnelle Vorhersagen bei stationären Daten.
 - **LSTM**: Eignet sich für nicht-stationäre Zeitreihen und zeigt bei großen Datensätzen gute Leistungen.
